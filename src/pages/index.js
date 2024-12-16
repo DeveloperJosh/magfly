@@ -34,11 +34,11 @@ export default function HomePage() {
   useEffect(() => {
     if (playlistUrl && videoRef.current) {
       if (videoRef.current.canPlayType('application/vnd.apple.mpegurl')) {
-        // Safari supports HLS natively
+        // Safari native HLS
         videoRef.current.src = playlistUrl;
         videoRef.current.play().catch(console.error);
       } else if (Hls.isSupported()) {
-        // Other browsers
+        // hls.js for other browsers
         const hls = new Hls();
         hls.loadSource(playlistUrl);
         hls.attachMedia(videoRef.current);
@@ -89,6 +89,10 @@ export default function HomePage() {
           <p><small>Now playing from {playlistUrl}</small></p>
         </div>
       )}
+
+      <div style={{ marginTop: '2rem' }}>
+        <a href="/streams">View All Streams</a>
+      </div>
     </div>
   );
 }

@@ -1,6 +1,10 @@
 // pages/api/start-stream.js
 import streamFromMagnet from '@/lib/streamFromMagnet';
 
+// In-memory storage for all streams
+// Each entry: { id, magnet, playlistUrl }
+global.streamsList = global.streamsList || [];
+
 export default async function handler(req, res) {
   const { magnet } = req.query;
   if (!magnet) {
@@ -12,7 +16,15 @@ export default async function handler(req, res) {
     const host = req.headers.host;
     const baseURL = `${protocol}://${host}`;
 
-    const { playlistUrl } = await streamFromMagnet(magnet, baseURL);
+    const { playlistUrl, uniqueId } = await streamFromMagnet(magnet, baseURL);
+
+    // Store in-memory
+    global.streamsList.push({
+      id: uniqueId,
+      magnet,
+      playlistUrl,
+    });
+
     res.status(200).json({ playlistUrl });
   } catch (err) {
     console.error(err);
